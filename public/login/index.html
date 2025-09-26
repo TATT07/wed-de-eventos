@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eventos - Login & Registro</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="form-container" id="login-form">
+      <h2><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h2>
+      <form>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" placeholder="Correo electrónico" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" placeholder="Contraseña" required>
+        </div>
+        <button type="submit" class="btn">Ingresar</button>
+        <p class="toggle">¿No tienes cuenta? <a href="#" id="show-register">Regístrate</a></p>
+      </form>
+    </div>
+
+    <div class="form-container hidden" id="register-form">
+      <h2><i class="fas fa-user-plus"></i> Crear Cuenta</h2>
+      <form>
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" placeholder="Usuario" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" placeholder="Correo electrónico" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" placeholder="Contraseña" required>
+        </div>
+        <button type="submit" class="btn">Registrarse</button>
+        <p class="toggle">¿Ya tienes cuenta? <a href="#" id="show-login">Inicia sesión</a></p>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

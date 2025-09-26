@@ -1,59 +1,62 @@
-// eventService.js
-// Esta capa contiene la lógica de negocio. Se comunica con un repo (inyección).
-// Aplica Single Responsibility (solo lógica de eventos) y Dependency Inversion
-// (depende de una abstracción del repositorio).
+// src/services/eventService.js
+const { ObjectId } = require("mongodb");
+
 class EventService {
-  constructor(repository) {
-    this.repo = repository;
+  constructor(eventRepository) {
+    this.eventRepository = eventRepository; // Inyección de dependencias
   }
 
-  async listEvents() {
-    return await this.repo.getAll();
+  // Obtener todos los eventos (acceso público)
+  async getAllEvents() {
+    return await this.eventRepository.findAll();
   }
 
-  async getEvent(id) {
-    return await this.repo.getById(id);
-  }
-
-  async createEvent(data) {
-    // Validaciones simples
-    if (!data.title || !data.date || !data.location) {
-      throw new Error('Missing required fields: title, date, location');
+  // Crear evento (solo usuarios autenticados)
+  async createEvent(eventData) {
+    if (!eventData.title || !eventData.description || !eventData.date || !eventData.location) {
+      throw new Error("Todos los campos son obligatorios.");
     }
-    return await this.repo.create({
-      title: data.title,
-      description: data.description || '',
-      date: data.date,
-      location: data.location,
-      category: data.category || 'General',
-      price: data.price || 0,
-      organizer: data.organizer || 'Anon'
-    });
+
+    const newEvent = {
+      title: eventData.title,
+      description: eventData.description,
+      date: eventData.date,
+      location: eventData.location,
+      createdBy: eventData.createdBy, // id del usuario que lo creó
+      createdAt: new Date(),
+    };
+
+    return await this.eventRepository.create(newEvent);
   }
 
-  async addComment(eventId, comment) {
-    if (!comment || (!comment.text && !comment.rating)) {
-      throw new Error('Comment text or rating required');
+  // Actualizar evento (solo el creador)
+  async updateEvent(eventId, eventData, userId) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) throw new Error("Evento no encontrado.");
+
+    if (event.createdBy.toString() !== userId.toString()) {
+      throw new Error("No tienes permiso para editar este evento.");
     }
-    const saved = await this.repo.addComment(eventId, {
-      text: comment.text || '',
-      rating: comment.rating || null,
-      author: comment.author || 'Anon'
-    });
-    return saved;
+
+    const updatedEvent = {
+      ...event,
+      ...eventData,
+      updatedAt: new Date(),
+    };
+
+    return await this.eventRepository.update(eventId, updatedEvent);
   }
 
-  async getOrganizersRanking() {
-    const orgs = await this.repo.getOrganizers();
-    // calcular promedio
-    const ranking = orgs.map(o => {
-      const sum = (o.ratings || []).reduce((a,b)=>a+b, 0);
-      const avg = (o.ratings && o.ratings.length) ? sum / o.ratings.length : 0;
-      return { id: o.id, name: o.name, averageRating: avg, ratingCount: (o.ratings||[]).length };
-    });
-    // ordenar desc
-    ranking.sort((a,b) => b.averageRating - a.averageRating);
-    return ranking;
+  // Eliminar evento (solo el creador)
+  async deleteEvent(eventId, userId) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) throw new Error("Evento no encontrado.");
+
+    if (event.createdBy.toString() !== userId.toString()) {
+      throw new Error("No tienes permiso para eliminar este evento.");
+    }
+
+    return await this.eventRepository.delete(eventId);
   }
 }
 
