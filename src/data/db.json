@@ -1,0 +1,54 @@
+{
+  "events": [
+    {
+      "id": "evt-1",
+      "title": "Concierto Plaza 8",
+      "description": "Noche de música local en la Plaza 8.",
+      "date": "2025-10-05T19:00:00",
+      "location": "Plaza 8 - Cúcuta",
+      "category": "Música",
+      "price": 20000,
+      "organizer": "Eventos Norte",
+      "comments": [
+        {
+          "id": "c1",
+          "author": "Ana",
+          "text": "Buen sonido, empezó un poco tarde.",
+          "rating": 4
+        },
+        {
+          "id": "8ffe426d-6e1d-46bf-ae42-76afdc5d8715",
+          "text": "bien",
+          "rating": 5,
+          "author": "Markkuz "
+        }
+      ]
+    },
+    {
+      "id": "evt-2",
+      "title": "Feria Gastronómica San José",
+      "description": "Comidas típicas y música en vivo.",
+      "date": "2025-10-12T11:00:00",
+      "location": "Parque San José",
+      "category": "Gastronomía",
+      "price": 0,
+      "organizer": "ComerCúcuta",
+      "comments": []
+    }
+  ],
+  "organizers": [
+    {
+      "id": "org-1",
+      "name": "Eventos Norte",
+      "ratings": [
+        4,
+        5
+      ]
+    },
+    {
+      "id": "org-2",
+      "name": "ComerCúcuta",
+      "ratings": []
+    }
+  ]
+}
