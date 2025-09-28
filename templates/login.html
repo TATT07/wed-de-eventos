@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar Sesión - EventosYa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <div class="max-w-md w-full space-y-8">
+        <div class="text-center">
+            <a href="{{ url_for('index') }}" class="inline-flex items-center mb-6 sm:mb-8">
+                <i class="fa-solid fa-calendar-days text-blue-600 text-3xl mr-2"></i>
+                <span class="text-2xl font-bold text-gray-900">EventosYa</span>
+            </a>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900">
+                Iniciar Sesión
+            </h2>
+            <p class="mt-2 text-sm text-gray-600">
+                O 
+                <a href="{{ url_for('register') }}" class="font-medium text-blue-600 hover:text-blue-500">
+                    crear una cuenta nueva
+                </a>
+            </p>
+        </div>
+        <form id="loginForm" class="mt-6 sm:mt-8 space-y-6 bg-white p-6 sm:p-8 rounded-lg shadow-md">
+            <div class="space-y-4">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input id="email" name="email" type="email" required 
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 text-sm sm:text-base"
+                           placeholder="tu@email.com">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                    <input id="password" name="password" type="password" required 
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 text-sm sm:text-base"
+                           placeholder="Tu contraseña">
+                </div>
+            </div>
+
+            <div>
+                <button id="submitBtn" type="submit" 
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300">
+                    Iniciar Sesión
+                </button>
+            </div>
+            
+            <div class="text-center">
+                <a href="{{ url_for('index') }}" class="text-blue-600 hover:text-blue-500 text-sm">
+                    ← Volver al inicio
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock %}

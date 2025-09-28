@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - EventosYa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100 flex">
+    <!-- Sidebar mejorado -->
+    <div class="bg-white shadow-2xl w-80 min-h-screen hidden lg:block transform transition-all duration-300 hover:shadow-2xl">
+        <div class="p-8 border-b border-gray-100">
+            <a href="{{ url_for('index') }}" class="flex items-center space-x-3">
+                <div class="bg-gradient-to-r from-primary-500 to-blue-600 p-3 rounded-2xl">
+                    <i class="fa-solid fa-calendar-days text-white text-2xl"></i>
+                </div>
+                <span class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-blue-700 bg-clip-text text-transparent">EventosYa</span>
+            </a>
+            <p class="text-gray-600 text-sm mt-2">Panel de Organizador</p>
+        </div>
+        
+        <nav class="p-6 space-y-2">
+            <a href="#" onclick="showSection('mis-eventos')" class="flex items-center space-x-4 p-4 rounded-2xl bg-gradient-to-r from-primary-500 to-blue-600 text-white shadow-lg transform hover:scale-105 transition-all duration-200">
+                <i class="fa-solid fa-calendar-check text-lg"></i>
+                <span class="font-semibold">Mis Eventos</span>
+            </a>
+            <a href="#" onclick="showSection('crear-evento')" class="flex items-center space-x-4 p-4 rounded-2xl text-gray-700 hover:bg-white hover:shadow-md transition-all duration-200">
+                <i class="fa-solid fa-plus text-lg text-primary-500"></i>
+                <span class="font-medium">Crear Evento</span>
+            </a>
+            <a href="{{ url_for('eventos') }}" class="flex items-center space-x-4 p-4 rounded-2xl text-gray-700 hover:bg-white hover:shadow-md transition-all duration-200">
+                <i class="fa-solid fa-eye text-lg text-green-500"></i>
+                <span class="font-medium">Ver Públicos</span>
+            </a>
+            <a href="{{ url_for('index') }}" class="flex items-center space-x-4 p-4 rounded-2xl text-gray-700 hover:bg-white hover:shadow-md transition-all duration-200">
+                <i class="fa-solid fa-home text-lg text-purple-500"></i>
+                <span class="font-medium">Ir al Inicio</span>
+            </a>
+        </nav>
+        
+        <div class="absolute bottom-0 w-80 p-6 border-t border-gray-100">
+            <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-2xl">
+                <div class="bg-primary-500 text-white p-2 rounded-full">
+                    <i class="fa-solid fa-user text-sm"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">{{ user.email }}</p>
+                    <p class="text-xs text-gray-500">Organizador</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="flex-1 flex flex-col">
+        <!-- Header mejorado -->
+        <header class="navbar-blur border-b border-gray-200">
+            <div class="flex justify-between items-center px-6 py-4">
+                <div class="lg:hidden">
+                    <button id="menuBtn" class="text-gray-700 p-2 rounded-2xl bg-white shadow-md hover:shadow-lg transition-all duration-200">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+                
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-blue-700 bg-clip-text text-transparent">Dashboard</h1>
+                
+                <div class="flex items-center space-x-4">
+                    <button id="logoutBtn" class="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-2xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                        <i class="fa-solid fa-right-from-bracket mr-2"></i>Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Menú móvil mejorado -->
+        <div id="mobileMenu" class="lg:hidden hidden bg-white shadow-2xl rounded-b-2xl">
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-primary-500 text-white p-2 rounded-full">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">{{ user.email }}</p>
+                        <p class="text-sm text-gray-500">Organizador</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="p-4 space-y-2">
+                <a href="#" onclick="showSection('mis-eventos')" class="flex items-center space-x-3 p-3 rounded-2xl bg-primary-50 text-primary-700 font-medium">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>Mis Eventos</span>
+                </a>
+                <a href="#" onclick="showSection('crear-evento')" class="flex items-center space-x-3 p-3 rounded-2xl text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Crear Evento</span>
+                </a>
+                <a href="{{ url_for('eventos') }}" class="flex items-center space-x-3 p-3 rounded-2xl text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-eye"></i>
+                    <span>Ver Públicos</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Contenido del Dashboard -->
+        <main class="flex-1 p-6 overflow-auto">
+            <!-- Sección: Mis Eventos -->
+            <section id="mis-eventos" class="section active fade-in">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900">Mis Eventos</h2>
+                        <p class="text-gray-600">Gestiona todos tus eventos creados</p>
+                    </div>
+                    <button onclick="showSection('crear-evento')" class="btn-gradient text-white px-8 py-3 rounded-2xl font-semibold shadow-lg hover-lift">
+                        <i class="fa-solid fa-plus mr-2"></i>Nuevo Evento
+                    </button>
+                </div>
+                
+                <div id="eventsList" class="fade-in">
+                    <div class="text-center py-12">
+                        <div class="loader mx-auto mb-4"></div>
+                        <p class="text-gray-600">Cargando tus eventos...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección: Crear Evento -->
+            <!-- Sección: Crear Evento -->
+            <section id="crear-evento" class="section hidden">
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-900">Crear Nuevo Evento</h2>
+                        <p class="text-gray-600">Comparte tu evento con el mundo</p>
+                    </div>
+
+                    <div class="bg-white rounded-3xl shadow-soft p-8 hover-lift">
+                        <form id="createEventForm" enctype="multipart/form-data" class="space-y-8">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <!-- Columna izquierda -->
+                                <div class="space-y-6">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-3">Título del Evento *</label>
+                                        <input type="text" name="title" required
+                                            class="form-input w-full rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                            placeholder="Ej: Concierto de Música en Vivo">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-3">Descripción *</label>
+                                        <textarea name="description" rows="5" required
+                                            class="form-input w-full rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                            placeholder="Describe tu evento de manera atractiva..."></textarea>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-3">Ubicación *</label>
+                                        <input type="text" name="location" required
+                                            class="form-input w-full rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                            placeholder="Dirección completa del evento">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-3">Organizador *</label>
+                                        <input type="text" name="organizer" required
+                                            class="form-input w-full rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                            placeholder="Nombre de la empresa o organizador">
+                                    </div>
+                                </div>
+
+                                <!-- Columna derecha -->
+                                <div class="space-y-6">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-3">Fecha *</label>
+                                            <input type="date" name="date" required
+                                                class="form-input w-full rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-3">Hora *</label>
+                                            <input type="time" name="time" required
+                                                class="form-input w-full rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-3">Categoría</label>
+                                        <select name="category"
+                                            class="form-input w-full rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                            <option value="Concierto">🎵 Concierto</option>
+                                            <option value="Deportes">⚽ Deportes</option>
+                                            <option value="Arte">🎨 Arte y Cultura</option>
+                                            <option value="Gastronomia">🍕 Gastronomía</option>
+                                            <option value="Educacion">📚 Educación</option>
+                                            <option value="Negocios">💼 Negocios</option>
+                                            <option value="General">🌟 General</option>
+                                            <option value="Otros">❓ Otros</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-3">Precio</label>
+                                            <input min="0" type="number" name="price" placeholder="Gratis == 0"
+                                                class="form-input w-full rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-3">Capacidad</label>
+                                            <input type="number" name="maxAttendees" value="100" min="1"
+                                                class="form-input w-full rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-3">Flyer del Evento
+                                            (Opcional)</label>
+                                        <div
+                                            class="relative border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center hover:border-primary-500 transition-colors duration-200">
+                                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-3"></i>
+                                            <p class="text-sm text-gray-600 mb-2">Haz clic en el botón para subir</p>
+                                            <input type="file" name="image" accept="image/*" class="hidden" id="imageInput">
+                                            <button type="button" onclick="document.getElementById('imageInput').click()"
+                                                class="bg-primary-500 text-white px-4 py-2 rounded-2xl text-sm hover:bg-primary-600">
+                                                Seleccionar Imagen
+                                            </button>
+                                            <p class="text-xs text-gray-500 mt-2">PNG, JPG, GIF hasta 5MB</p>
+                                        </div>
+                                        <div id="fileName" class="text-sm text-green-600 mt-2 hidden"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                                <button type="button" onclick="showSection('mis-eventos')"
+                                    class="px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-2xl font-semibold hover:border-gray-400 transition-all duration-200">
+                                    Cancelar
+                                </button>
+                                <button type="submit"
+                                    class="btn-gradient text-white px-8 py-3 rounded-2xl font-semibold shadow-lg hover-lift">
+                                    <i class="fa-solid fa-plus mr-2"></i>Crear Evento
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<!-- Modal de edición mejorado -->
+<div id="editEventModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900">Editar Evento</h3>
+                <button onclick="closeEditModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <form id="editEventForm" class="space-y-6">
+                <input type="hidden" id="editEventId">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Título</label>
+                        <input type="text" id="editTitle" class="form-input w-full rounded-2xl px-4 py-3" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Organizador</label>
+                        <input type="text" id="editOrganizer" class="form-input w-full rounded-2xl px-4 py-3" required>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                        <textarea id="editDescription" rows="3" class="form-input w-full rounded-2xl px-4 py-3" required></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Ubicación</label>
+                        <input type="text" id="editLocation" class="form-input w-full rounded-2xl px-4 py-3" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha</label>
+                            <input type="date" id="editDate" class="form-input w-full rounded-2xl px-4 py-3" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Hora</label>
+                            <input type="time" id="editTime" class="form-input w-full rounded-2xl px-4 py-3" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                    <button type="button" onclick="closeEditModal()" 
+                            class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-2xl font-semibold hover:border-gray-400">
+                        Cancelar
+                    </button>
+                    <button type="submit" 
+                            class="btn-gradient text-white px-6 py-3 rounded-2xl font-semibold shadow-lg">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

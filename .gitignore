@@ -1,0 +1,31 @@
+# Entornos virtuales
+venv/
+.env/
+
+# Archivos de configuración de entorno
+*.env
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+*.log
+
+# Archivos de bases de datos locales (si usas sqlite)
+*.sqlite3
+instance/
+
+# Archivos temporales de OS/IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Archivos de dependencias instaladas
+*.egg-info/
+.eggs/
+dist/
+build/
