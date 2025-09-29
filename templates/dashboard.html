@@ -7,7 +7,7 @@
     <!-- Sidebar mejorado -->
     <div class="bg-white shadow-2xl w-80 min-h-screen hidden lg:block transform transition-all duration-300 hover:shadow-2xl">
         <div class="p-8 border-b border-gray-100">
-            <a href="{{ url_for('index') }}" class="flex items-center space-x-3">
+            <a href="{{ url_for('main_routes.index') }}" class="flex items-center space-x-3">
                 <div class="bg-gradient-to-r from-primary-500 to-blue-600 p-3 rounded-2xl">
                     <i class="fa-solid fa-calendar-days text-white text-2xl"></i>
                 </div>
@@ -25,11 +25,11 @@
                 <i class="fa-solid fa-plus text-lg text-primary-500"></i>
                 <span class="font-medium">Crear Evento</span>
             </a>
-            <a href="{{ url_for('eventos') }}" class="flex items-center space-x-4 p-4 rounded-2xl text-gray-700 hover:bg-white hover:shadow-md transition-all duration-200">
+            <a href="{{ url_for('main_routes.eventos') }}" class="flex items-center space-x-4 p-4 rounded-2xl text-gray-700 hover:bg-white hover:shadow-md transition-all duration-200">
                 <i class="fa-solid fa-eye text-lg text-green-500"></i>
                 <span class="font-medium">Ver Públicos</span>
             </a>
-            <a href="{{ url_for('index') }}" class="flex items-center space-x-4 p-4 rounded-2xl text-gray-700 hover:bg-white hover:shadow-md transition-all duration-200">
+            <a href="{{ url_for('main_routes.index') }}" class="flex items-center space-x-4 p-4 rounded-2xl text-gray-700 hover:bg-white hover:shadow-md transition-all duration-200">
                 <i class="fa-solid fa-home text-lg text-purple-500"></i>
                 <span class="font-medium">Ir al Inicio</span>
             </a>
@@ -91,9 +91,13 @@
                     <i class="fa-solid fa-plus"></i>
                     <span>Crear Evento</span>
                 </a>
-                <a href="{{ url_for('eventos') }}" class="flex items-center space-x-3 p-3 rounded-2xl text-gray-700 hover:bg-gray-50">
+                <a href="{{ url_for('main_routes.eventos') }}" class="flex items-center space-x-3 p-3 rounded-2xl text-gray-700 hover:bg-gray-50">
                     <i class="fa-solid fa-eye"></i>
                     <span>Ver Públicos</span>
+                </a>
+                <a href="{{ url_for('main_routes.index') }}" class="flex items-center space-x-3 p-3 rounded-2xl text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-home"></i>
+                    <span>Ir al Inicio</span>
                 </a>
             </nav>
         </div>
@@ -120,7 +124,6 @@
                 </div>
             </section>
 
-            <!-- Sección: Crear Evento -->
             <!-- Sección: Crear Evento -->
             <section id="crear-evento" class="section hidden">
                 <div class="max-w-4xl mx-auto">

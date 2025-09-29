@@ -1,112 +1,75 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EventosYa</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <!-- Font Awesome -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-50">
-  <!-- NAVBAR -->
-  <header class="bg-white shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex items-center">
-          <i class="fa-solid fa-calendar-days text-blue-600 text-2xl mr-3"></i>
-          <span class="text-xl font-bold text-gray-900">EventosYa</span>
-        </div>
-        
-        <!-- Botón hamburguesa para móviles -->
-        <button class="md:hidden text-gray-700 focus:outline-none" id="menuBtn">
-          <i class="fa-solid fa-bars text-xl"></i>
-        </button>
-        
-        <!-- Navegación desktop -->
-        <nav class="hidden md:block">
-          <ul class="flex space-x-4 lg:space-x-6">
-            <li><a href="{{ url_for('index') }}" class="text-gray-700 hover:text-blue-600 font-medium text-sm lg:text-base"><i class="fa-solid fa-house mr-1"></i> Inicio</a></li>
-            <li><a href="{{ url_for('eventos') }}" class="text-gray-700 hover:text-blue-600 font-medium text-sm lg:text-base"><i class="fa-solid fa-calendar mr-1"></i> Eventos</a></li>
-            <li><a href="{{ url_for('login') }}" class="text-gray-700 hover:text-blue-600 font-medium text-sm lg:text-base"><i class="fa-solid fa-right-to-bracket mr-1"></i> Iniciar Sesión</a></li>
-          </ul>
-        </nav>
-      </div>
-      
-      <!-- Menú móvil -->
-      <div class="md:hidden hidden bg-white py-4 border-t" id="mobileMenu">
-        <ul class="space-y-3">
-          <li><a href="{{ url_for('index') }}" class="block text-gray-700 hover:text-blue-600 font-medium py-2"><i class="fa-solid fa-house mr-2"></i> Inicio</a></li>
-          <li><a href="{{ url_for('eventos') }}" class="block text-gray-700 hover:text-blue-600 font-medium py-2"><i class="fa-solid fa-calendar mr-2"></i> Eventos</a></li>
-          <li><a href="{{ url_for('login') }}" class="block text-gray-700 hover:text-blue-600 font-medium py-2"><i class="fa-solid fa-right-to-bracket mr-2"></i> Iniciar Sesión</a></li>
-        </ul>
-      </div>
-    </div>
-  </header>
+{% extends "base.html" %}
 
-  <!-- HERO -->
-  <section class="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-12 md:py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight">Descubre los mejores eventos en tu ciudad</h1>
-      <p class="text-lg sm:text-xl mb-8 max-w-3xl mx-auto">Conciertos, ferias, cultura y mucho más en un solo lugar.</p>
-      <a href="{{ url_for('eventos') }}" class="inline-block bg-white text-blue-600 px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300 text-sm sm:text-base">
-        <i class="fa-solid fa-location-dot mr-2"></i> Ver eventos
-      </a>
-    </div>
-  </section>
+{% block title %}Inicio - EventosYa{% endblock %}
 
-  <!-- GRID DE EVENTOS -->
-  <section id="eventos" class="py-12 md:py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-8 sm:mb-12">Próximos eventos destacados</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-          <img src="https://picsum.photos/400/250?random=1" alt="Concierto" class="w-full h-48 object-cover">
-          <div class="p-4 sm:p-6">
-            <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2"><i class="fa-solid fa-music text-blue-600 mr-2"></i> Concierto Silvestre Dangond</h3>
-            <p class="text-gray-600 text-sm sm:text-base">Este sábado en el Estadio Metropolitano</p>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-          <img src="https://picsum.photos/400/250?random=2" alt="Feria" class="w-full h-48 object-cover">
-          <div class="p-4 sm:p-6">
-            <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2"><i class="fa-solid fa-utensils text-blue-600 mr-2"></i> Feria Gastronómica</h3>
-            <p class="text-gray-600 text-sm sm:text-base">Comidas típicas y música en vivo.</p>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-          <img src="https://picsum.photos/400/250?random=3" alt="Arte" class="w-full h-48 object-cover">
-          <div class="p-4 sm:p-6">
-            <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2"><i class="fa-solid fa-paintbrush text-blue-600 mr-2"></i> Exposición de Arte</h3>
-            <p class="text-gray-600 text-sm sm:text-base">Galería Central - Domingo 6PM</p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="text-center mt-8 sm:mt-12">
-        <a href="{{ url_for('eventos') }}" class="inline-block bg-blue-600 text-white px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 text-sm sm:text-base">
-          Ver todos los eventos
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-20">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h1 class="text-4xl lg:text-6xl font-bold mb-6">Encuentra los Mejores Eventos</h1>
+        <p class="text-xl lg:text-2xl mb-8 opacity-90">Descubre experiencias únicas y conecta con tu comunidad</p>
+        <a href="{{ url_for('main_routes.eventos') }}" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition duration-300">
+            <i class="fa-solid fa-calendar-day mr-2"></i>Explorar Eventos
         </a>
-      </div>
     </div>
-  </section>
+</section>
 
-  <!-- FOOTER -->
-  <footer class="bg-gray-800 text-white py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <p class="text-sm sm:text-base">&copy; 2024 EventosYa. Todos los derechos reservados.</p>
+<!-- Features Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">¿Por qué usar EventosYa?</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="text-center p-6">
+                <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-calendar-check text-blue-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Eventos Diversos</h3>
+                <p class="text-gray-600">Desde conferencias hasta conciertos, encuentra eventos que se adapten a tus intereses.</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="text-center p-6">
+                <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-ticket text-green-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Fácil Registro</h3>
+                <p class="text-gray-600">Regístrate en eventos con solo unos clics. Gestión simple y rápida.</p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="text-center p-6">
+                <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-users text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Comunidad Activa</h3>
+                <p class="text-gray-600">Conecta con organizadores y asistentes. Crea tu propia red de contactos.</p>
+            </div>
+        </div>
     </div>
-  </footer>
+</section>
 
-  <!-- Script para menú móvil -->
-  <script>
-    document.getElementById('menuBtn').addEventListener('click', function() {
-      const mobileMenu = document.getElementById('mobileMenu');
-      mobileMenu.classList.toggle('hidden');
-    });
-  </script>
-</body>
-</html>
+<!-- CTA Section -->
+<section class="bg-gray-100 py-16">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-4 text-gray-800">¿Eres organizador?</h2>
+        <p class="text-xl text-gray-600 mb-8">Crea y gestiona tus eventos de manera profesional</p>
+        
+        {% if session.user %}
+        <a href="{{ url_for('event_routes.dashboard') }}" class="bg-blue-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition duration-300">
+            <i class="fa-solid fa-gauge mr-2"></i>Ir al Dashboard
+        </a>
+        {% else %}
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{{ url_for('auth_routes.register') }}" class="bg-blue-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition duration-300">
+                <i class="fa-solid fa-user-plus mr-2"></i>Registrarse
+            </a>
+            <a href="{{ url_for('main_routes.eventos') }}" class="bg-green-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-green-700 transition duration-300">
+                <i class="fa-solid fa-calendar-day mr-2"></i>Ver Eventos
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

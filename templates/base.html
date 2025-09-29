@@ -5,36 +5,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}EventosYa{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="{{ url_for('main_routes.index') }}" class="text-2xl font-bold text-blue-600">
+                        <i class="fa-solid fa-calendar-day mr-2"></i>EventosYa
+                    </a>
+                </div>
+
+                <!-- Menú Desktop -->
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="{{ url_for('main_routes.index') }}" class="text-gray-700 hover:text-blue-600 font-medium text-sm lg:text-base"><i class="fa-solid fa-house mr-1"></i> Inicio</a>
+                    <a href="{{ url_for('main_routes.eventos') }}" class="text-gray-700 hover:text-blue-600 font-medium text-sm lg:text-base"><i class="fa-solid fa-calendar-check mr-1"></i> Eventos</a>
+                    
+                    {% if session.user %}
+                    <a href="{{ url_for('event_routes.dashboard') }}" class="text-gray-700 hover:text-blue-600 font-medium text-sm lg:text-base"><i class="fa-solid fa-gauge mr-1"></i> Dashboard</a>
+                    <a href="#" onclick="logout()" class="text-gray-700 hover:text-blue-600 font-medium text-sm lg:text-base">
+                        <i class="fa-solid fa-right-from-bracket mr-1"></i> Cerrar Sesión
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('auth_routes.login') }}" class="text-gray-700 hover:text-blue-600 font-medium text-sm lg:text-base"><i class="fa-solid fa-right-to-bracket mr-1"></i> Iniciar Sesión</a>
+                    <a href="{{ url_for('auth_routes.register') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium text-sm lg:text-base"><i class="fa-solid fa-user-plus mr-1"></i> Registrarse</a>
+                    {% endif %}
+                </div>
+
+                <!-- Menú Mobile -->
+                <div class="lg:hidden">
+                    <button id="mobile-menu-button" class="text-gray-700">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Menú Mobile Expandido -->
+            <div id="mobile-menu" class="lg:hidden hidden pb-4">
+                <div class="flex flex-col space-y-4">
+                    <a href="{{ url_for('main_routes.index') }}" class="text-gray-700 hover:text-blue-600 font-medium"><i class="fa-solid fa-house mr-2"></i>Inicio</a>
+                    <a href="{{ url_for('main_routes.eventos') }}" class="text-gray-700 hover:text-blue-600 font-medium"><i class="fa-solid fa-calendar-check mr-2"></i>Eventos</a>
+                    
+                    {% if session.user %}
+                    <a href="{{ url_for('event_routes.dashboard') }}" class="text-gray-700 hover:text-blue-600 font-medium"><i class="fa-solid fa-gauge mr-2"></i>Dashboard</a>
+                    <a href="#" onclick="logout()" class="text-gray-700 hover:text-blue-600 font-medium">
+                        <i class="fa-solid fa-right-from-bracket mr-2"></i>Cerrar Sesión
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('auth_routes.login') }}" class="text-gray-700 hover:text-blue-600 font-medium"><i class="fa-solid fa-right-to-bracket mr-2"></i>Iniciar Sesión</a>
+                    <a href="{{ url_for('auth_routes.register') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium text-center"><i class="fa-solid fa-user-plus mr-2"></i>Registrarse</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p>&copy; 2024 EventosYa. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                        }
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-in-out',
-                        'bounce-in': 'bounceIn 0.6s ease-out'
-                    }
+        // Menú móvil
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Logout function
+        async function logout() {
+            try {
+                const response = await fetch('{{ url_for("auth_routes.logout") }}', {
+                    method: 'GET'
+                });
+                
+                if (response.ok) {
+                    window.location.href = "{{ url_for('main_routes.index') }}";
                 }
+            } catch (error) {
+                console.error('Error al cerrar sesión:', error);
             }
         }
+
+        // Mostrar/ocultar mensajes flash
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.transition = 'opacity 0.5s';
+                    message.style.opacity = '0';
+                    setTimeout(() => message.remove(), 500);
+                }, 5000);
+            });
+        });
     </script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <!-- Estilos personalizados -->
-    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
-</head>
-<body class="bg-gray-50 font-sans">
-    {% block content %}{% endblock %}
-    
+
     {% block scripts %}{% endblock %}
 </body>
 </html>
