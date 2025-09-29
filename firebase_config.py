@@ -43,9 +43,9 @@ class FirebaseManager:
         data = {"email": email, "password": password, "returnSecureToken": True}
         return self._make_auth_request("signInWithPassword", data)
     
-    # ===== FIRESTORE (EVENTOS) - CORREGIDO =====
+    # ===== FIRESTORE (EVENTOS) =====
     def create_event(self, event_data, id_token):
-        """Crear evento en Firestore - Versión corregida"""
+        """Crear evento en Firestore"""
         url = f"{self.firestore_url}/events"
         headers = {
             "Authorization": f"Bearer {id_token}",
@@ -59,7 +59,7 @@ class FirebaseManager:
         event_data.setdefault('maxAttendees', '100')
         event_data.setdefault('status', 'active')
         
-        # Formato CORRECTO para Firestore
+        # Formato para Firestore
         firestore_data = {
             "fields": {
                 "title": {"stringValue": event_data["title"]},
@@ -101,50 +101,57 @@ class FirebaseManager:
             error_msg = f"Excepción: {str(e)}"
             return {"success": False, "error": error_msg}
     
-    def get_events(self, page=1, limit=10, category=None, search=None):
-        """Obtener eventos públicos - Versión corregida"""
-        url = f"{self.firestore_url}:runQuery"
-        
-        # Consulta base simplificada SIN orderBy que causa problemas
-        query = {
-            "structuredQuery": {
-                "from": [{"collectionId": "events"}],
-                "where": {
-                    "fieldFilter": {
-                        "field": {"fieldPath": "status"},
-                        "op": "EQUAL",
-                        "value": {"stringValue": "active"}
-                    }
-                },
-                "limit": limit
-            }
-        }
+    def get_events(self, page=1, limit=10, category='all', search=''):
+        """Obtener eventos públicos - SIN ÍNDICES COMPUESTOS"""
+        print(f"=== DEBUG: Obteniendo eventos - Página: {page}, Límite: {limit}, Categoría: {category}, Búsqueda: {search}")
         
         try:
-            response = requests.post(url, json=query, timeout=30)
+            # Método alternativo: obtener todos los documentos y filtrar localmente
+            url = f"{self.firestore_url}/events"
+            response = requests.get(url, timeout=30)
             
-            print("=== DEBUG: Consulta eventos públicos ===")
-            print("Status:", response.status_code)
-            print("Response:", response.text)
+            print("=== DEBUG: Respuesta de Firestore (get all) ===")
+            print("Status Code:", response.status_code)
             
             if response.status_code == 200:
+                data = response.json()
                 events = []
-                results = response.json()
                 
-                for item in results:
-                    if "document" in item:
-                        doc = item["document"]
+                if "documents" in data:
+                    for doc in data["documents"]:
                         event_data = self._parse_firestore_document(doc)
-                        # Solo agregar eventos activos
-                        if event_data.get('status') == 'active':
+                        
+                        # Solo eventos activos
+                        if event_data.get('status') != 'active':
+                            continue
+                            
+                        # Aplicar filtros localmente
+                        category_match = True
+                        search_match = True
+                        
+                        # Filtro de categoría
+                        if category and category != 'all':
+                            category_match = event_data.get('category', '').lower() == category.lower()
+                        
+                        # Filtro de búsqueda
+                        if search and search.strip():
+                            search_match = (
+                                search.lower() in event_data.get('title', '').lower() or
+                                search.lower() in event_data.get('description', '').lower() or
+                                search.lower() in event_data.get('location', '').lower()
+                            )
+                        
+                        if category_match and search_match:
                             events.append(event_data)
                 
-                print(f"=== DEBUG: Eventos públicos encontrados: {len(events)} ===")
-                
-                # Ordenar manualmente por fecha de creación
+                # Ordenar por fecha de creación (más reciente primero)
                 events.sort(key=lambda x: x.get('createdAt', ''), reverse=True)
                 
-                # Paginación manual
+                print(f"=== DEBUG: Eventos encontrados: {len(events)}")
+                for event in events:
+                    print(f" - {event.get('title')} (ID: {event.get('id')})")
+                
+                # Paginación
                 start_index = (page - 1) * limit
                 end_index = start_index + limit
                 paginated_events = events[start_index:end_index]
@@ -152,72 +159,60 @@ class FirebaseManager:
                 return {
                     "success": True, 
                     "events": paginated_events, 
-                    "page": page, 
-                    "total": len(events),
+                    "page": page,
+                    "totalEvents": len(events),
                     "hasMore": end_index < len(events)
                 }
             else:
-                return {"success": False, "error": f"Error {response.status_code}: {response.text}"}
+                error_msg = f"Error {response.status_code}: {response.text}"
+                print(f"=== DEBUG: Error en Firestore: {error_msg}")
+                return {"success": False, "error": error_msg}
                 
         except Exception as e:
-            print("=== DEBUG: Error en get_events ===")
-            print(str(e))
-            return {"success": False, "error": str(e)}
-    
+            error_msg = f"Excepción: {str(e)}"
+            print(f"=== DEBUG: Excepción: {error_msg}")
+            return {"success": False, "error": error_msg}
+
     def get_user_events(self, user_id, id_token):
-        """Obtener eventos del usuario específico - Versión simplificada"""
-        url = f"{self.firestore_url}:runQuery"
-        headers = {"Authorization": f"Bearer {id_token}"}
-        
-        # Consulta SIMPLIFICADA sin orderBy complejo
-        query = {
-            "structuredQuery": {
-                "from": [{"collectionId": "events"}],
-                "where": {
-                    "fieldFilter": {
-                        "field": {"fieldPath": "creatorId"},
-                        "op": "EQUAL",
-                        "value": {"stringValue": user_id}
-                    }
-                }
-                # Removemos orderBy temporalmente para evitar errores de índice
-            }
-        }
-        
-        print("=== DEBUG: Obteniendo eventos del usuario (consulta simplificada) ===")
+        """Obtener eventos del usuario - SIN ÍNDICES COMPUESTOS"""
+        print("=== DEBUG: Obteniendo eventos del usuario ===")
         print("User ID:", user_id)
         
         try:
-            response = requests.post(url, headers=headers, json=query, timeout=30)
+            # Método alternativo: obtener todos y filtrar por usuario
+            url = f"{self.firestore_url}/events"
+            headers = {"Authorization": f"Bearer {id_token}"}
+            response = requests.get(url, headers=headers, timeout=30)
             
             print("=== DEBUG: Respuesta eventos usuario ===")
             print("Status:", response.status_code)
             
             if response.status_code == 200:
+                data = response.json()
                 events = []
-                results = response.json()
                 
-                for item in results:
-                    if "document" in item:
-                        doc = item["document"]
+                if "documents" in data:
+                    for doc in data["documents"]:
                         event_data = self._parse_firestore_document(doc)
-                        # Solo agregar eventos activos
-                        if event_data.get('status') == 'active':
+                        
+                        # Filtrar por usuario
+                        if event_data.get('creatorId') == user_id:
                             events.append(event_data)
                 
-                # Ordenar manualmente en Python por fecha de creación
+                # Ordenar por fecha de creación
                 events.sort(key=lambda x: x.get('createdAt', ''), reverse=True)
                 
                 print("=== DEBUG: Eventos encontrados ===")
                 print("Número de eventos:", len(events))
                 for event in events:
-                    print(f"Evento: {event['title']} - Creador: {event['creatorId']} - Status: {event.get('status', 'unknown')}")
+                    print(f"Evento: {event['title']} - Estado: {event.get('status', 'active')}")
                 
                 return {"success": True, "events": events}
             else:
-                print("Error:", response.text)
+                print(f"=== DEBUG: Error en consulta: {response.text}")
                 return {"success": False, "error": response.text}
         except Exception as e:
+            print(f"=== DEBUG: Excepción: {str(e)}")
             return {"success": False, "error": str(e)}
     
     def update_event(self, event_id, event_data, id_token):
@@ -228,37 +223,37 @@ class FirebaseManager:
             "Content-Type": "application/json"
         }
         
-        print("=== DEBUG: Actualizando evento ===")
-        print("Event ID:", event_id)
-        print("Datos a actualizar:", event_data)
-        
         update_data = {"fields": {}}
+        
+        # Mapear todos los tipos de datos correctamente
         for key, value in event_data.items():
             if isinstance(value, str):
                 update_data["fields"][key] = {"stringValue": value}
             elif isinstance(value, int):
                 update_data["fields"][key] = {"integerValue": str(value)}
+            elif isinstance(value, bool):
+                update_data["fields"][key] = {"booleanValue": value}
+            elif value is None:
+                # Manejar valores nulos
+                update_data["fields"][key] = {"nullValue": None}
         
+        # Siempre agregar timestamp de actualización
         update_data["fields"]["updatedAt"] = {"timestampValue": datetime.utcnow().isoformat() + "Z"}
         
-        print("=== DEBUG: Datos de actualización ===")
-        print(json.dumps(update_data, indent=2))
+        print("=== DEBUG: Actualizando evento ===")
+        print("Event ID:", event_id)
+        print("Datos de actualización:", json.dumps(update_data, indent=2))
         
         try:
-            response = requests.patch(url, headers=headers, json=update_data, timeout=30)
-            
+            response = requests.patch(url, headers=headers, json=update_data)
             print("=== DEBUG: Respuesta de actualización ===")
             print("Status:", response.status_code)
             print("Response:", response.text)
             
             if response.status_code == 200:
-                return {"success": True, "message": "Evento actualizado correctamente"}
+                return {"success": True, "status": response.status_code}
             else:
-                return {
-                    "success": False, 
-                    "error": f"Error {response.status_code}: {response.text}",
-                    "status": response.status_code
-                }
+                return {"success": False, "error": f"Error {response.status_code}: {response.text}"}
         except Exception as e:
             return {"success": False, "error": str(e)}
     

@@ -217,6 +217,7 @@ def api_events():
             print(error_msg)
             return jsonify({'success': False, 'message': error_msg})
 
+
 @app.route('/api/events/<event_id>', methods=['PUT', 'DELETE'])
 def api_event_management(event_id):
     """API para actualizar y eliminar eventos - Solo el creador puede modificar"""
@@ -226,14 +227,59 @@ def api_event_management(event_id):
     if request.method == 'PUT':
         try:
             event_data = request.get_json()
+            
+            print(f"=== DEBUG: Actualizando evento {event_id} ===")
+            print("Datos recibidos:", event_data)
+            
+            # Asegurar que los campos críticos se mantengan
+            # Primero, obtener el evento actual para preservar campos importantes
+            user_events_result = firebase_manager.get_user_events(
+                session['user']['uid'], 
+                session['user']['idToken']
+            )
+            
+            if user_events_result['success']:
+                current_event = None
+                for event in user_events_result['events']:
+                    if event['id'] == event_id:
+                        current_event = event
+                        break
+                
+                if current_event:
+                    # Preservar campos críticos que no vienen en el formulario de edición
+                    event_data.setdefault('creatorId', current_event['creatorId'])
+                    event_data.setdefault('creatorEmail', current_event['creatorEmail'])
+                    event_data.setdefault('imageUrl', current_event.get('imageUrl', ''))
+                    event_data.setdefault('price', current_event.get('price', 'Gratis'))
+                    event_data.setdefault('category', current_event.get('category', 'General'))
+                    event_data.setdefault('maxAttendees', current_event.get('maxAttendees', 100))
+            
+            # Asegurar que el estado se mantenga como 'active'
+            event_data['status'] = 'active'
+            
+            # Agregar timestamp de actualización
+            event_data['updatedAt'] = datetime.utcnow().isoformat() + "Z"
+            
+            print("=== DEBUG: Datos finales para actualización ===")
+            print(event_data)
+            
+            result = firebase_manager.update_event(event_id, event_data, session['user']['idToken'])
+            return jsonify(result)
+        except Exception as e:
+            print(f"=== DEBUG: Error en actualización: {str(e)}")
+            return jsonify({'success': False, 'message': str(e)})
+    
+    elif request.method == 'DELETE':
+        # En lugar de eliminar físicamente, marcar como inactivo
+        try:
+            event_data = {
+                'status': 'inactive',
+                'updatedAt': datetime.utcnow().isoformat() + "Z"
+            }
             result = firebase_manager.update_event(event_id, event_data, session['user']['idToken'])
             return jsonify(result)
         except Exception as e:
             return jsonify({'success': False, 'message': str(e)})
-    
-    elif request.method == 'DELETE':
-        result = firebase_manager.delete_event(event_id, session['user']['idToken'])
-        return jsonify(result)
 
 @app.route('/logout')
 def logout():

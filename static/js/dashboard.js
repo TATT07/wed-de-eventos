@@ -297,13 +297,23 @@ function setupFileInput() {
     }
 }
 
-// Editar evento
+
+
+
+// Editar evento - VERSIÓN MEJORADA
 function editEvent(eventId) {
+    console.log("=== DEBUG: Editando evento ===");
+    console.log("Event ID:", eventId);
+    console.log("Eventos actuales:", currentEvents);
+    
     const event = currentEvents.find(e => e.id === eventId);
     if (!event) {
+        console.error("Evento no encontrado:", eventId);
         showAlert('error', 'Error', 'No se encontró el evento');
         return;
     }
+    
+    console.log("Evento encontrado:", event);
     
     // Llenar el modal con los datos del evento
     document.getElementById('editEventId').value = event.id;
@@ -317,12 +327,14 @@ function editEvent(eventId) {
     document.getElementById('editEventModal').classList.remove('hidden');
 }
 
+
+
 // Cerrar modal de edición
 function closeEditModal() {
     document.getElementById('editEventModal').classList.add('hidden');
 }
 
-// Actualizar evento
+// Actualizar evento - VERSIÓN MEJORADA
 async function updateEvent() {
     const eventId = document.getElementById('editEventId').value;
     const eventData = {
@@ -331,8 +343,13 @@ async function updateEvent() {
         location: document.getElementById('editLocation').value,
         date: document.getElementById('editDate').value,
         time: document.getElementById('editTime').value,
-        organizer: document.getElementById('editOrganizer').value
+        organizer: document.getElementById('editOrganizer').value,
+        status: 'active' // Asegurar que el estado sea activo
     };
+    
+    console.log("=== DEBUG: Enviando actualización ===");
+    console.log("Event ID:", eventId);
+    console.log("Datos:", eventData);
     
     const submitBtn = document.querySelector('#editEventForm button[type="submit"]');
     const originalText = submitBtn.innerHTML;
@@ -350,16 +367,23 @@ async function updateEvent() {
         });
         
         const data = await response.json();
+        console.log('Respuesta de actualización:', data);
         
         if (data.success) {
             await showAlert('success', '¡Éxito!', 'Evento actualizado correctamente');
             closeEditModal();
-            loadUserEvents();
+            
+            // Recargar eventos después de un breve delay
+            setTimeout(() => {
+                console.log("Recargando eventos después de actualización...");
+                loadUserEvents();
+            }, 1000);
         } else {
             await showAlert('error', 'Error', data.message || 'Error al actualizar el evento');
         }
     } catch (error) {
-        await showAlert('error', 'Error', 'Error de conexión');
+        console.error('Error actualizando evento:', error);
+        await showAlert('error', 'Error', 'Error de conexión al actualizar el evento');
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;

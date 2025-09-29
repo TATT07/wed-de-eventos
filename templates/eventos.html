@@ -123,45 +123,57 @@
     });
 
     // Cargar eventos desde la API
-    async function loadEvents(page = 1) {
-      const category = document.getElementById('categoryFilter').value;
-      const search = document.getElementById('searchFilter').value;
-      
-      try {
+async function loadEvents(page = 1) {
+    const category = document.getElementById('categoryFilter').value;
+    const search = document.getElementById('searchFilter').value;
+    
+    try {
         document.getElementById('eventsContainer').innerHTML = `
-          <div class="text-center py-12">
-            <i class="fa-solid fa-spinner fa-spin text-3xl text-gray-400 mb-4"></i>
-            <p class="text-gray-600">Cargando eventos...</p>
-          </div>
+            <div class="text-center py-12">
+                <i class="fa-solid fa-spinner fa-spin text-3xl text-gray-400 mb-4"></i>
+                <p class="text-gray-600">Cargando eventos...</p>
+            </div>
         `;
+
+        console.log(`Cargando eventos - Página: ${page}, Categoría: ${category}, Búsqueda: ${search}`);
 
         const response = await fetch(`/api/events?page=${page}&limit=${eventsPerPage}&category=${category}&search=${search}`);
         const data = await response.json();
 
-        if (data.success && data.events.length > 0) {
-          displayEvents(data.events);
-          setupPagination(data.page, data.events.length);
-        } else {
-          document.getElementById('eventsContainer').innerHTML = `
-            <div class="text-center py-12">
-              <i class="fa-solid fa-calendar-xmark text-4xl text-gray-300 mb-4"></i>
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">No se encontraron eventos</h3>
-              <p class="text-gray-600">Intenta con otros filtros de búsqueda</p>
-            </div>
-          `;
-          document.getElementById('pagination').classList.add('hidden');
-        }
-      } catch (error) {
-        document.getElementById('eventsContainer').innerHTML = `
-          <div class="text-center py-12 text-red-600">
-            <i class="fa-solid fa-exclamation-triangle text-3xl mb-4"></i>
-            <h3 class="text-lg font-semibold mb-2">Error al cargar eventos</h3>
-            <p>Intenta recargar la página</p>
-          </div>
-        `;
-      }
-    }
+        console.log('Datos recibidos de eventos:', data);
 
+        if (data.success && data.events && data.events.length > 0) {
+            displayEvents(data.events);
+            setupPagination(data.page, data.events.length, data.hasMore);
+        } else {
+            let message = 'No se encontraron eventos';
+            if (data.message) {
+                message = data.message;
+            } else if (category !== 'all' || search) {
+                message = 'No se encontraron eventos con los filtros aplicados';
+            }
+            
+            document.getElementById('eventsContainer').innerHTML = `
+                <div class="text-center py-12">
+                    <i class="fa-solid fa-calendar-xmark text-4xl text-gray-300 mb-4"></i>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">${message}</h3>
+                    <p class="text-gray-600">Intenta con otros filtros de búsqueda</p>
+                </div>
+            `;
+            document.getElementById('pagination').classList.add('hidden');
+        }
+    } catch (error) {
+        console.error('Error cargando eventos:', error);
+        document.getElementById('eventsContainer').innerHTML = `
+            <div class="text-center py-12 text-red-600">
+                <i class="fa-solid fa-exclamation-triangle text-3xl mb-4"></i>
+                <h3 class="text-lg font-semibold mb-2">Error al cargar eventos</h3>
+                <p>Intenta recargar la página</p>
+                <p class="text-sm mt-2">${error.message}</p>
+            </div>
+        `;
+    }
+}
     // Mostrar eventos en la página
     function displayEvents(events) {
       const eventsHTML = events.map(event => `
