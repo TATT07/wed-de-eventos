@@ -286,5 +286,72 @@ def logout():
     session.pop('user', None)
     return redirect(url_for('index'))
 
+@app.route('/api/events/<event_id>/reviews', methods=['GET', 'POST'])
+def api_event_reviews(event_id):
+    """API para obtener y agregar reseñas"""
+    if request.method == 'GET':
+        # Pública - cualquiera puede ver las reseñas
+        result = firebase_manager.get_event_reviews(event_id)
+        return jsonify(result)
+    
+    elif request.method == 'POST':
+        # Protegida - solo usuarios autenticados pueden agregar reseñas
+        if 'user' not in session:
+            return jsonify({'success': False, 'message': 'Debes iniciar sesión para agregar reseñas'})
+        
+        try:
+            data = request.get_json()
+            review_data = {
+                'userId': session['user']['uid'],
+                'userEmail': session['user']['email'],
+                'rating': data.get('rating', 0),
+                'comment': data.get('comment', '').strip()
+            }
+            
+            # Validar rating
+            if not 1 <= review_data['rating'] <= 5:
+                return jsonify({'success': False, 'message': 'La calificación debe ser entre 1 y 5 estrellas'})
+            
+            # Validar que el comentario no esté vacío
+            if not review_data['comment']:
+                return jsonify({'success': False, 'message': 'El comentario no puede estar vacío'})
+            
+            result = firebase_manager.add_review(event_id, review_data, session['user']['idToken'])
+            return jsonify(result)
+            
+        except Exception as e:
+            return jsonify({'success': False, 'message': f'Error del servidor: {str(e)}'})
+
+@app.route('/api/events/<event_id>/details')
+def api_event_details(event_id):
+    """API para obtener detalles completos de un evento incluyendo reseñas"""
+    try:
+        # Obtener información del evento
+        events_result = firebase_manager.get_events()
+        event = None
+        
+        if events_result['success']:
+            for ev in events_result['events']:
+                if ev['id'] == event_id:
+                    event = ev
+                    break
+        
+        if not event:
+            return jsonify({'success': False, 'message': 'Evento no encontrado'})
+        
+        # Obtener reseñas del evento
+        reviews_result = firebase_manager.get_event_reviews(event_id)
+        
+        response_data = {
+            'success': True,
+            'event': event,
+            'reviews': reviews_result['reviews'] if reviews_result['success'] else []
+        }
+        
+        return jsonify(response_data)
+    except Exception as e:
+        print(f"=== DEBUG: Error en api_event_details: {str(e)}")
+        return jsonify({'success': False, 'message': f'Error del servidor: {str(e)}'})
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -74,6 +74,8 @@ class FirebaseManager:
                 "price": {"stringValue": event_data["price"]},
                 "category": {"stringValue": event_data["category"]},
                 "maxAttendees": {"integerValue": str(event_data.get("maxAttendees", 100))},
+                "averageRating": {"doubleValue": 0.0},
+                "reviewCount": {"integerValue": "0"},
                 "status": {"stringValue": "active"},
                 "createdAt": {"timestampValue": datetime.utcnow().isoformat() + "Z"}
             }
@@ -233,6 +235,8 @@ class FirebaseManager:
                 update_data["fields"][key] = {"integerValue": str(value)}
             elif isinstance(value, bool):
                 update_data["fields"][key] = {"booleanValue": value}
+            elif isinstance(value, float):
+                update_data["fields"][key] = {"doubleValue": value}
             elif value is None:
                 # Manejar valores nulos
                 update_data["fields"][key] = {"nullValue": None}
@@ -283,6 +287,88 @@ class FirebaseManager:
         except Exception as e:
             return {"success": False, "error": str(e)}
     
+    # ===== RESEÑAS Y CALIFICACIONES =====
+    def add_review(self, event_id, review_data, id_token):
+        """Agregar reseña a un evento"""
+        url = f"{self.firestore_url}/events/{event_id}/reviews"
+        headers = {
+            "Authorization": f"Bearer {id_token}",
+            "Content-Type": "application/json"
+        }
+        
+        firestore_data = {
+            "fields": {
+                "userId": {"stringValue": review_data["userId"]},
+                "userEmail": {"stringValue": review_data["userEmail"]},
+                "rating": {"integerValue": str(review_data["rating"])},
+                "comment": {"stringValue": review_data["comment"]},
+                "createdAt": {"timestampValue": datetime.utcnow().isoformat() + "Z"}
+            }
+        }
+        
+        try:
+            response = requests.post(url, headers=headers, json=firestore_data, timeout=30)
+            
+            if response.status_code == 200:
+                # Actualizar el promedio de calificaciones del evento
+                self.update_event_rating(event_id, id_token)
+                return {"success": True, "message": "Reseña agregada correctamente"}
+            else:
+                return {"success": False, "error": f"Error {response.status_code}: {response.text}"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def get_event_reviews(self, event_id):
+        """Obtener reseñas de un evento"""
+        url = f"{self.firestore_url}/events/{event_id}/reviews"
+        
+        try:
+            response = requests.get(url, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                reviews = []
+                
+                if "documents" in data:
+                    for doc in data["documents"]:
+                        fields = doc.get("fields", {})
+                        review_data = {
+                            "id": doc["name"].split("/")[-1],
+                            "userId": fields.get("userId", {}).get("stringValue", ""),
+                            "userEmail": fields.get("userEmail", {}).get("stringValue", ""),
+                            "rating": int(fields.get("rating", {}).get("integerValue", 0)),
+                            "comment": fields.get("comment", {}).get("stringValue", ""),
+                            "createdAt": fields.get("createdAt", {}).get("timestampValue", "")
+                        }
+                        reviews.append(review_data)
+                
+                return {"success": True, "reviews": reviews}
+            else:
+                return {"success": False, "error": f"Error {response.status_code}: {response.text}"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def update_event_rating(self, event_id, id_token):
+        """Actualizar el promedio de calificaciones del evento"""
+        reviews_result = self.get_event_reviews(event_id)
+        
+        if reviews_result["success"] and reviews_result["reviews"]:
+            reviews = reviews_result["reviews"]
+            total_rating = sum(review["rating"] for review in reviews)
+            average_rating = round(total_rating / len(reviews), 1)
+            review_count = len(reviews)
+            
+            # Actualizar el evento con el nuevo promedio
+            update_data = {
+                "averageRating": average_rating,
+                "reviewCount": review_count,
+                "updatedAt": datetime.utcnow().isoformat() + "Z"
+            }
+            
+            return self.update_event(event_id, update_data, id_token)
+        
+        return {"success": False, "error": "No hay reseñas para calcular el promedio"}
+    
     # ===== HELPERS =====
     def _parse_firestore_document(self, doc):
         """Parsear documento de Firestore a diccionario Python"""
@@ -302,6 +388,8 @@ class FirebaseManager:
             "price": fields.get("price", {}).get("stringValue", "Gratis"),
             "category": fields.get("category", {}).get("stringValue", "General"),
             "maxAttendees": int(fields.get("maxAttendees", {}).get("integerValue", 100)),
+            "averageRating": float(fields.get("averageRating", {}).get("doubleValue", 0.0)),
+            "reviewCount": int(fields.get("reviewCount", {}).get("integerValue", 0)),
             "status": fields.get("status", {}).get("stringValue", "active"),
             "createdAt": fields.get("createdAt", {}).get("timestampValue", "")
         }
