@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EventosYa - Descubre los mejores eventos</title>
+  
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Estilos Neumorphism Premium -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+</head>
+<body>
+
+  <!-- ========================================
+       NAVBAR GLASSMORPHISM
+       ======================================== -->
+  <nav class="neu-nav">
+    <div class="logo">
+      <i class="fa-solid fa-calendar-days"></i> 
+      EventosYa
+    </div>
+    <ul>
+      <li>
+        <a href="{{ url_for('index') }}">
+          <i class="fa-solid fa-house"></i> 
+          Inicio
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('eventos') }}">
+          <i class="fa-solid fa-calendar-check"></i> 
+          Eventos
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('login') }}">
+          <i class="fa-solid fa-right-to-bracket"></i> 
+          Iniciar Sesión
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- ========================================
+       HERO SECTION
+       ======================================== -->
+  <section class="hero">
+    <h1>✨ Descubre los mejores eventos en tu ciudad</h1>
+    <p>🎉 Conciertos, ferias, cultura y mucho más en un solo lugar.</p>
+    <a href="#destacados" class="neu-btn neu-btn-gradient">
+      <i class="fa-solid fa-star"></i>
+      Explorar eventos destacados
+    </a>
+  </section>
+
+  <!-- ========================================
+       CARRUSEL DE EVENTOS DESTACADOS - PASARELA
+       ======================================== -->
+  <section id="destacados" class="carousel-section">
+    <div class="carousel-container">
+      <h2 class="section-title">🔥 Eventos Destacados de la Semana</h2>
+      
+      <div class="carousel-wrapper">
+        <div class="carousel-track-container">
+          <div class="carousel-track" id="carouselTrack">
+            
+            <!-- Slide 1 -->
+            <div class="carousel-slide">
+              <div class="featured-event-card">
+                <img src="https://picsum.photos/seed/featured1/500/350" alt="Concierto Silvestre Dangond" class="featured-event-image">
+                <div class="featured-event-content">
+                  <span class="featured-event-badge">🎤 DESTACADO</span>
+                  <h3>Concierto Silvestre Dangond</h3>
+                  <p><i class="fa-solid fa-location-dot"></i> Estadio Metropolitano</p>
+                  <p><i class="fa-solid fa-calendar-day"></i> Sábado 5 Oct, 8:00 PM</p>
+                  <p><i class="fa-solid fa-ticket"></i> Desde $150.000</p>
+                  <div class="featured-event-footer">
+                    <a href="#" class="neu-btn neu-btn-gradient">
+                      <i class="fa-solid fa-ticket"></i> Comprar entradas
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="carousel-slide">
+              <div class="featured-event-card">
+                <img src="https://picsum.photos/seed/featured2/500/350" alt="Festival Gastronómico" class="featured-event-image">
+                <div class="featured-event-content">
+                  <span class="featured-event-badge">🍽️ NUEVO</span>
+                  <h3>Festival Gastronómico Internacional</h3>
+                  <p><i class="fa-solid fa-location-dot"></i> Parque Santander</p>
+                  <p><i class="fa-solid fa-calendar-day"></i> Vie a Dom, 10:00 AM</p>
+                  <p><i class="fa-solid fa-ticket"></i> Entrada libre</p>
+                  <div class="featured-event-footer">
+                    <a href="#" class="neu-btn neu-btn-gradient">
+                      <i class="fa-solid fa-info-circle"></i> Más información
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="carousel-slide">
+              <div class="featured-event-card">
+                <img src="https://picsum.photos/seed/featured3/500/350" alt="Noche de Rock" class="featured-event-image">
+                <div class="featured-event-content">
+                  <span class="featured-event-badge">🎸 TENDENCIA</span>
+                  <h3>Noche de Rock Nacional</h3>
+                  <p><i class="fa-solid fa-location-dot"></i> Club El Faro</p>
+                  <p><i class="fa-solid fa-calendar-day"></i> Viernes 4 Oct, 9:00 PM</p>
+                  <p><i class="fa-solid fa-ticket"></i> Desde $80.000</p>
+                  <div class="featured-event-footer">
+                    <a href="#" class="neu-btn neu-btn-gradient">
+                      <i class="fa-solid fa-ticket"></i> Reservar ahora
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 4 -->
+            <div class="carousel-slide">
+              <div class="featured-event-card">
+                <img src="https://picsum.photos/seed/featured4/500/350" alt="Teatro Musical" class="featured-event-image">
+                <div class="featured-event-content">
+                  <span class="featured-event-badge">🎭 IMPERDIBLE</span>
+                  <h3>Musical: El Rey León</h3>
+                  <p><i class="fa-solid fa-location-dot"></i> Teatro Mayor</p>
+                  <p><i class="fa-solid fa-calendar-day"></i> Todo el mes</p>
+                  <p><i class="fa-solid fa-ticket"></i> Desde $120.000</p>
+                  <div class="featured-event-footer">
+                    <a href="#" class="neu-btn neu-btn-gradient">
+                      <i class="fa-solid fa-calendar-check"></i> Ver fechas
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 5 -->
+            <div class="carousel-slide">
+              <div class="featured-event-card">
+                <img src="https://picsum.photos/seed/featured5/500/350" alt="Festival Electrónica" class="featured-event-image">
+                <div class="featured-event-content">
+                  <span class="featured-event-badge">🎧 HOT</span>
+                  <h3>Festival de Música Electrónica</h3>
+                  <p><i class="fa-solid fa-location-dot"></i> Parque Industrial</p>
+                  <p><i class="fa-solid fa-calendar-day"></i> Sábado 19 Oct, 6:00 PM</p>
+                  <p><i class="fa-solid fa-ticket"></i> Desde $100.000</p>
+                  <div class="featured-event-footer">
+                    <a href="#" class="neu-btn neu-btn-gradient">
+                      <i class="fa-solid fa-ticket"></i> Comprar ahora
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 6 -->
+            <div class="carousel-slide">
+              <div class="featured-event-card">
+                <img src="https://picsum.photos/seed/featured6/500/350" alt="Expo Arte" class="featured-event-image">
+                <div class="featured-event-content">
+                  <span class="featured-event-badge">🎨 CULTURA</span>
+                  <h3>Exposición Arte Moderno</h3>
+                  <p><i class="fa-solid fa-location-dot"></i> Museo de Arte</p>
+                  <p><i class="fa-solid fa-calendar-day"></i> Todo octubre</p>
+                  <p><i class="fa-solid fa-ticket"></i> $20.000</p>
+                  <div class="featured-event-footer">
+                    <a href="#" class="neu-btn neu-btn-gradient">
+                      <i class="fa-solid fa-info-circle"></i> Más detalles
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Controles del carrusel -->
+        <div class="carousel-controls">
+          <button class="carousel-btn" id="prevBtn">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          
+          <div class="carousel-indicators">
+            <span class="indicator active" data-slide="0"></span>
+            <span class="indicator" data-slide="1"></span>
+            <span class="indicator" data-slide="2"></span>
+            <span class="indicator" data-slide="3"></span>
+          </div>
+          
+          <button class="carousel-btn" id="nextBtn">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       GRID DE TODOS LOS EVENTOS
+       ======================================== -->
+  <section id="eventos" class="py-12">
+    <div class="container">
+      <h2 class="section-title">🎊 Todos los Eventos Próximos</h2>
+      
+      <div class="event-grid">
+        
+        <!-- Tarjeta 1 -->
+        <div class="event-card">
+          <img src="https://picsum.photos/seed/event1/400/250" alt="Concierto Vallenato">
+          <div class="content">
+            <h3>
+              <i class="fa-solid fa-music"></i> 
+              Festival Vallenato 2025
+            </h3>
+            <p><i class="fa-solid fa-location-dot"></i> Plaza de la Paz</p>
+            <p><i class="fa-solid fa-calendar-day"></i> Sábado 12 Oct, 7:00 PM</p>
+            <p><i class="fa-solid fa-ticket"></i> Desde $120.000</p>
+          </div>
+        </div>
+
+        <!-- Tarjeta 2 -->
+        <div class="event-card">
+          <img src="https://picsum.photos/seed/event2/400/250" alt="Obra de Teatro">
+          <div class="content">
+            <h3>
+              <i class="fa-solid fa-masks-theater"></i> 
+              Obra: "El amor en los tiempos del cólera"
+            </h3>
+            <p><i class="fa-solid fa-location-dot"></i> Teatro Municipal</p>
+            <p><i class="fa-solid fa-calendar-day"></i> Jueves a Domingo, 8:00 PM</p>
+            <p><i class="fa-solid fa-ticket"></i> $50.000 - $100.000</p>
+          </div>
+        </div>
+
+        <!-- Tarjeta 3 -->
+        <div class="event-card">
+          <img src="https://picsum.photos/seed/event3/400/250" alt="Exposición de Arte">
+          <div class="content">
+            <h3>
+              <i class="fa-solid fa-palette"></i> 
+              Exposición: Arte Contemporáneo
+            </h3>
+            <p><i class="fa-solid fa-location-dot"></i> Galería Central</p>
+            <p><i class="fa-solid fa-calendar-day"></i> Todo el mes, 10:00 AM - 6:00 PM</p>
+            <p><i class="fa-solid fa-ticket"></i> Entrada libre</p>
+          </div>
+        </div>
+
+        <!-- Tarjeta 4 -->
+        <div class="event-card">
+          <img src="https://picsum.photos/seed/event4/400/250" alt="Festival de Cine">
+          <div class="content">
+            <h3>
+              <i class="fa-solid fa-film"></i> 
+              Festival Internacional de Cine
+            </h3>
+            <p><i class="fa-solid fa-location-dot"></i> Cineplex Teatro Mayor</p>
+            <p><i class="fa-solid fa-calendar-day"></i> 15 al 20 de Octubre</p>
+            <p><i class="fa-solid fa-ticket"></i> $30.000 por función</p>
+          </div>
+        </div>
+
+        <!-- Tarjeta 5 -->
+        <div class="event-card">
+          <img src="https://picsum.photos/seed/event5/400/250" alt="Carrera Atlética">
+          <div class="content">
+            <h3>
+              <i class="fa-solid fa-person-running"></i> 
+              Maratón Ciudad de Cúcuta 10K
+            </h3>
+            <p><i class="fa-solid fa-location-dot"></i> Malecón del Río Pamplonita</p>
+            <p><i class="fa-solid fa-calendar-day"></i> Domingo 20 Oct, 6:00 AM</p>
+            <p><i class="fa-solid fa-ticket"></i> Inscripción $60.000</p>
+          </div>
+        </div>
+
+        <!-- Tarjeta 6 -->
+        <div class="event-card">
+          <img src="https://picsum.photos/seed/event6/400/250" alt="Jazz Night">
+          <div class="content">
+            <h3>
+              <i class="fa-solid fa-guitar"></i> 
+              Jazz Night - Noche de Saxofón
+            </h3>
+            <p><i class="fa-solid fa-location-dot"></i> Bar & Lounge La Terraza</p>
+            <p><i class="fa-solid fa-calendar-day"></i> Viernes 11 Oct, 9:00 PM</p>
+            <p><i class="fa-solid fa-ticket"></i> Cover $40.000</p>
+          </div>
+        </div>
+
+        <!-- Tarjeta 7 -->
+        <div class="event-card">
+          <img src="https://picsum.photos/seed/event7/400/250" alt="Stand Up Comedy">
+          <div class="content">
+            <h3>
+              <i class="fa-solid fa-face-laugh"></i> 
+              Stand Up Comedy Night
+            </h3>
+            <p><i class="fa-solid fa-location-dot"></i> Comedy Club Cúcuta</p>
+            <p><i class="fa-solid fa-calendar-day"></i> Sábado 13 Oct, 8:30 PM</p>
+            <p><i class="fa-solid fa-ticket"></i> $45.000</p>
+          </div>
+        </div>
+
+        <!-- Tarjeta 8 -->
+        <div class="event-card">
+          <img src="https://picsum.photos/seed/event8/400/250" alt="Feria Artesanal">
+          <div class="content">
+            <h3>
+              <i class="fa-solid fa-store"></i> 
+              Feria de Artesanías y Manualidades
+            </h3>
+            <p><i class="fa-solid fa-location-dot"></i> Centro Comercial Ventura Plaza</p>
+            <p><i class="fa-solid fa-calendar-day"></i> Sáb y Dom, 10:00 AM - 8:00 PM</p>
+            <p><i class="fa-solid fa-ticket"></i> Entrada libre</p>
+          </div>
+        </div>
+
+        <!-- Tarjeta 9 -->
+        <div class="event-card">
+          <img src="https://picsum.photos/seed/event9/400/250" alt="Tech Summit">
+          <div class="content">
+            <h3>
+              <i class="fa-solid fa-laptop-code"></i> 
+              Tech Summit 2025 - Innovación
+            </h3>
+            <p><i class="fa-solid fa-location-dot"></i> Hotel Tonchalá</p>
+            <p><i class="fa-solid fa-calendar-day"></i> Miércoles 9 Oct, 2:00 PM</p>
+            <p><i class="fa-solid fa-ticket"></i> $200.000 (Incluye networking)</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Botón Ver Todos -->
+      <div class="text-center mt-8">
+        <a href="{{ url_for('eventos') }}" class="neu-btn neu-btn-gradient">
+          <i class="fa-solid fa-grid"></i>
+          Ver todos los eventos
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       FOOTER LIMPIO
+       ======================================== -->
+  <footer>
+    <p>
+      © 2025 <span>EventosYa</span> — Descubre los mejores eventos en tu ciudad
+    </p>
+    <p style="margin-top: 0.8rem;">
+      <i class="fa-solid fa-heart" style="color: #ec4899;"></i> 
+      Hecho con pasión en Cúcuta
+    </p>
+  </footer>
+
+  <!-- ========================================
+       JAVASCRIPT PARA EL CARRUSEL
+       ======================================== -->
+  <script>
+    const track = document.getElementById('carouselTrack');
+    const slides = document.querySelectorAll('.carousel-slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const indicators = document.querySelectorAll('.indicator');
+    
+    let currentIndex = 0;
+    let autoplayInterval;
+
+    function moveToSlide(index) {
+      const maxIndex = slides.length - 1;
+      
+      if (index < 0) {
+        currentIndex = maxIndex;
+      } else if (index > maxIndex) {
+        currentIndex = 0;
+      } else {
+        currentIndex = index;
+      }
+      
+      const slideWidth = slides[0].offsetWidth;
+      const gap = 48; // 3rem en píxeles
+      const offset = -(currentIndex * (slideWidth + gap));
+      
+      track.style.transform = `translateX(${offset}px)`;
+      
+      updateIndicators();
+    }
+
+    function updateIndicators() {
+      indicators.forEach((indicator, i) => {
+        indicator.classList.remove('active');
+      });
+      
+      const indicatorIndex = Math.min(currentIndex, indicators.length - 1);
+      if (indicators[indicatorIndex]) {
+        indicators[indicatorIndex].classList.add('active');
+      }
+    }
+
+    function startAutoplay() {
+      autoplayInterval = setInterval(() => {
+        moveToSlide(currentIndex + 1);
+      }, 4000);
+    }
+
+    function stopAutoplay() {
+      clearInterval(autoplayInterval);
+    }
+
+    prevBtn.addEventListener('click', () => {
+      stopAutoplay();
+      moveToSlide(currentIndex - 1);
+      startAutoplay();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      stopAutoplay();
+      moveToSlide(currentIndex + 1);
+      startAutoplay();
+    });
+
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        stopAutoplay();
+        moveToSlide(index);
+        startAutoplay();
+      });
+    });
+
+    track.addEventListener('mouseenter', stopAutoplay);
+    track.addEventListener('mouseleave', startAutoplay);
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    track.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      stopAutoplay();
+    });
+
+    track.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const swipeThreshold = 50;
+      if (touchStartX - touchEndX > swipeThreshold) {
+        moveToSlide(currentIndex + 1);
+      }
+      if (touchEndX - touchStartX > swipeThreshold) {
+        moveToSlide(currentIndex - 1);
+      }
+      startAutoplay();
+    });
+
+    window.addEventListener('resize', () => {
+      moveToSlide(currentIndex);
+    });
+
+    moveToSlide(0);
+    startAutoplay();
+  </script>
+
+</body>
+</html>

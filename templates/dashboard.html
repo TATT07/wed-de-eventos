@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - EventosYa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex">
+    <!-- Sidebar -->
+    <aside class="neu-card w-72 min-h-screen p-6 flex flex-col justify-between">
+        <div>
+            <a href="{{ url_for('index') }}" class="flex items-center space-x-3 mb-8">
+                <div class="neu-card neu-icon p-3">
+                    <i class="fa-solid fa-calendar-days text-xl"></i>
+                </div>
+                <span class="text-2xl font-bold">EventosYa</span>
+            </a>
+            <p class="text-gray-600 text-sm mb-6">Panel de Organizador</p>
+
+            <nav class="flex flex-col space-y-3">
+                <a href="#" onclick="showSection('mis-eventos')" class="neu-btn flex items-center space-x-3">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>Mis Eventos</span>
+                </a>
+                <a href="#" onclick="showSection('crear-evento')" class="neu-btn flex items-center space-x-3">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Crear Evento</span>
+                </a>
+                <a href="{{ url_for('eventos') }}" class="neu-btn flex items-center space-x-3">
+                    <i class="fa-solid fa-eye"></i>
+                    <span>Ver Públicos</span>
+                </a>
+                <a href="{{ url_for('index') }}" class="neu-btn flex items-center space-x-3">
+                    <i class="fa-solid fa-home"></i>
+                    <span>Ir al Inicio</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="neu-card flex items-center space-x-3 p-3">
+            <div class="neu-icon p-2">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <div>
+                <p class="text-sm font-medium truncate">{{ user.email }}</p>
+                <p class="text-xs text-gray-500">Organizador</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Contenido principal -->
+    <div class="flex-1 flex flex-col">
+        <!-- Header -->
+        <header class="neu-card flex justify-between items-center px-6 py-4">
+            <h1 class="text-2xl font-bold">Dashboard</h1>
+            <button id="logoutBtn" class="neu-btn">
+                <i class="fa-solid fa-right-from-bracket mr-2"></i>Cerrar Sesión
+            </button>
+        </header>
+
+        <!-- Contenido -->
+        <main class="flex-1 p-6 overflow-auto">
+            <!-- Mis eventos -->
+            <section id="mis-eventos" class="section active">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold">Mis Eventos</h2>
+                        <p class="text-gray-600 text-sm">Gestiona todos tus eventos creados</p>
+                    </div>
+                    <button onclick="showSection('crear-evento')" class="neu-btn">
+                        <i class="fa-solid fa-plus mr-2"></i>Nuevo Evento
+                    </button>
+                </div>
+
+                <div id="eventsList" class="neu-card p-6 text-center">
+                    <div class="loader mx-auto mb-4"></div>
+                    <p class="text-gray-600">Cargando tus eventos...</p>
+                </div>
+            </section>
+
+            <!-- Crear evento -->
+            <section id="crear-evento" class="section hidden">
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-6">
+                        <h2 class="text-xl font-bold">Crear Nuevo Evento</h2>
+                        <p class="text-gray-600 text-sm">Comparte tu evento con el mundo</p>
+                    </div>
+
+                    <div class="neu-card p-6">
+                        <form id="createEventForm" enctype="multipart/form-data" class="space-y-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Columna izquierda -->
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm mb-2">Título *</label>
+                                        <input type="text" name="title" required class="neu-input w-full" placeholder="Ej: Concierto de Música en Vivo">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm mb-2">Descripción *</label>
+                                        <textarea name="description" rows="4" required class="neu-input w-full"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm mb-2">Ubicación *</label>
+                                        <input type="text" name="location" required class="neu-input w-full" placeholder="Dirección completa del evento">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm mb-2">Organizador *</label>
+                                        <input type="text" name="organizer" required class="neu-input w-full">
+                                    </div>
+                                </div>
+
+                                <!-- Columna derecha -->
+                                <div class="space-y-4">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm mb-2">Fecha *</label>
+                                            <input type="date" name="date" required class="neu-input w-full">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm mb-2">Hora *</label>
+                                            <input type="time" name="time" required class="neu-input w-full">
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm mb-2">Categoría</label>
+                                        <select name="category" class="neu-input w-full">
+                                            <option value="Concierto">🎵 Concierto</option>
+                                            <option value="Deportes">⚽ Deportes</option>
+                                            <option value="Arte">🎨 Arte y Cultura</option>
+                                            <option value="Gastronomia">🍕 Gastronomía</option>
+                                            <option value="Educacion">📚 Educación</option>
+                                            <option value="Negocios">💼 Negocios</option>
+                                            <option value="General">🌟 General</option>
+                                            <option value="Otros">❓ Otros</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm mb-2">Precio</label>
+                                            <input type="number" name="price" min="0" class="neu-input w-full" placeholder="Gratis = 0">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm mb-2">Capacidad</label>
+                                            <input type="number" name="maxAttendees" value="100" min="1" class="neu-input w-full">
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm mb-2">Flyer (opcional)</label>
+                                        <input type="file" name="image" accept="image/*" class="neu-input w-full">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end space-x-4">
+                                <button type="button" onclick="showSection('mis-eventos')" class="neu-btn">Cancelar</button>
+                                <button type="submit" class="neu-btn"><i class="fa-solid fa-plus mr-2"></i>Crear Evento</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<!-- Modal editar -->
+<div id="editEventModal" class="fixed inset-0 hidden items-center justify-center z-50 p-4 bg-black bg-opacity-40">
+    <div class="neu-card max-w-xl w-full p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">Editar Evento</h3>
+            <button onclick="closeEditModal()" class="neu-btn px-3 py-1">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <form id="editEventForm" class="space-y-4">
+            <input type="hidden" id="editEventId">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm mb-2">Título</label>
+                    <input type="text" id="editTitle" class="neu-input w-full" required>
+                </div>
+                <div>
+                    <label class="block text-sm mb-2">Organizador</label>
+                    <input type="text" id="editOrganizer" class="neu-input w-full" required>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm mb-2">Descripción</label>
+                    <textarea id="editDescription" rows="3" class="neu-input w-full" required></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm mb-2">Ubicación</label>
+                    <input type="text" id="editLocation" class="neu-input w-full" required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm mb-2">Fecha</label>
+                        <input type="date" id="editDate" class="neu-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-2">Hora</label>
+                        <input type="time" id="editTime" class="neu-input w-full" required>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-4 mt-4">
+                <button type="button" onclick="closeEditModal()" class="neu-btn">Cancelar</button>
+                <button type="submit" class="neu-btn">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

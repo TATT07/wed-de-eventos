@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Registrarse - EventosYa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 neu-bg">
+    <div class="max-w-md w-full space-y-8">
+        <div class="text-center">
+            <a href="{{ url_for('index') }}" class="inline-flex items-center mb-6 sm:mb-8">
+                <i class="fa-solid fa-calendar-days text-blue-600 text-3xl mr-2"></i>
+                <span class="text-2xl font-bold text-gray-900">EventosYa</span>
+            </a>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900">
+                Crear Cuenta
+            </h2>
+            <p class="mt-2 text-sm text-gray-600">
+                O 
+                <a href="{{ url_for('login') }}" class="font-medium text-blue-600 hover:text-blue-500">
+                    iniciar sesión
+                </a>
+            </p>
+        </div>
+
+        <!-- Card con Neumorphism -->
+        <form id="registerForm" class="neu-card p-6 sm:p-8 space-y-6">
+            <div class="space-y-4">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input id="email" name="email" type="email" required 
+                           class="neu-input"
+                           placeholder="tu@email.com">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                    <input id="password" name="password" type="password" required 
+                           class="neu-input"
+                           placeholder="Mínimo 6 caracteres">
+                </div>
+                <div>
+                    <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirmar Contraseña</label>
+                    <input id="confirm_password" name="confirm_password" type="password" required 
+                           class="neu-input"
+                           placeholder="Repite tu contraseña">
+                </div>
+            </div>
+
+            <div>
+                <button id="submitBtn" type="submit" class="neu-btn w-full">
+                    Registrarse
+                </button>
+            </div>
+            
+            <div class="text-center">
+                <a href="{{ url_for('index') }}" class="text-blue-600 hover:text-blue-500 text-sm">
+                    ← Volver al inicio
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock %}
