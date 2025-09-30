@@ -111,4 +111,3 @@ python app.py
 - **Host:** 0.0.0.0 (accesible desde cualquier IP)
 - **Puerto:** 5000
 - **Modo:** Debug activado
->>>>>>> Liang
